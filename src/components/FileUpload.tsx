@@ -61,6 +61,10 @@ const FileUpload = () => {
   return (
     <div className="p-2 bg-white rounded-xl">
       FileUpload
+      <p className=" gap-2 items-end text-sm text-white bg-slate-400 rounded-lg">
+        Note: New FileUploads may not work due to limited funds of Open ai. but
+        you are welcome to chat with other uploaded pdfs
+      </p>
       <div
         {...getRootProps({
           className:

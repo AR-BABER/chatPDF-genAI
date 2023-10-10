@@ -1,13 +1,22 @@
 "use client";
 import { DrizzleChat } from "@/lib/db/schema";
 import Link from "next/link";
-
+import { chats as dbchats } from "@/lib/db/schema";
 import { Button } from "./ui/button";
-import { MessageCircle, PlusCircle } from "lucide-react";
+import {
+  Delete,
+  MessageCircle,
+  PlusCircle,
+  Router,
+  Trash2,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 import axios from "axios";
 import React from "react";
-
+import { db } from "@/lib/db";
+import { eq } from "drizzle-orm";
+import { useRouter } from "next/navigation";
+import { UserButton, auth } from "@clerk/nextjs";
 type Props = {
   chats: DrizzleChat[];
   chatId: number;
@@ -15,6 +24,8 @@ type Props = {
 
 export const ChatSideBar = ({ chats, chatId }: Props) => {
   const [loading, setloading] = React.useState(false);
+  const router = useRouter();
+
   const handleSubscription = async () => {
     try {
       setloading(true);
@@ -42,6 +53,27 @@ export const ChatSideBar = ({ chats, chatId }: Props) => {
               <p className="w-full overflow-hidden text-sm truncate whitespace-nowrap text-ellipsis">
                 {chat.pdfName}
               </p>
+              <Button
+                className="bg-gray-900 flex items-center space-x-2 px-4 py-2"
+                onClick={async () => {
+                  await db.delete(dbchats).where(eq(dbchats.id, chat.id));
+                  const { userId } = await auth();
+                  let firstChat;
+                  if (userId) {
+                    firstChat = await db
+                      .select()
+                      .from(dbchats)
+                      .where(eq(dbchats.userId, userId));
+                    if (firstChat) {
+                      firstChat = firstChat[0];
+                    }
+                  }
+                  console.log("huha", firstChat);
+                  router.push(`chat/${firstChat?.id}`);
+                }}
+              >
+                <Trash2 className="w-4 h-4   " />
+              </Button>
             </div>
           </Link>
         ))}

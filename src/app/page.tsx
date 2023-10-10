@@ -12,7 +12,8 @@ import { chats } from "@/lib/db/schema";
 import { log } from "console";
 import SubscriptionButton from "@/components/SubscriptionButton";
 export default async function Home() {
-  const { userId } = await auth();
+  //const { userId } = await auth();
+  const userId = "user_2Vv6XBeSR5xDLWELbe1WvWD2zeh";
   const isAuth = !!userId;
   const isPro = await checkSubscription();
   let firstChat;
